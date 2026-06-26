@@ -2,11 +2,10 @@
 <html lang="id">
 <head>
   <link rel="stylesheet" href="style.css">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kontrol Keliling — Petugas</title>
-<?!= include('style'); ?>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kontrol Keliling — Petugas</title>
+  <style>
 /* ── PIN SCREEN ── */
 #pin-screen {
   position: fixed; inset: 0; z-index: 999;
@@ -95,9 +94,7 @@
 .next-schedule-title   { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #868e96; font-weight: 700; }
 .next-schedule-time    { font-size: 16px; font-weight: 800; color: #f59f00; }
 
-/* ══════════════════════════════════════════════════
-   SEKSI SCAN QR — IN-APP CAMERA
-   ══════════════════════════════════════════════════ */
+/* ── SCAN SECTION ── */
 .scan-section {
   border-radius: var(--r-lg); overflow: hidden; margin-bottom: 14px;
   border: 1px solid var(--line); background: var(--surface); box-shadow: var(--sh);
@@ -105,7 +102,6 @@
 .scan-head { padding: 18px 18px 14px; }
 .scan-head .card-title { margin-bottom: 0; }
 
-/* Status banner */
 .titik-banner {
   padding: 14px 18px; display: flex; align-items: center; gap: 10px;
   font-size: 13px; font-weight: 700; letter-spacing: .2px;
@@ -129,7 +125,6 @@
 .titik-card .nm { font-size: 15px; font-weight: 700; color: var(--ink); }
 .titik-card .zn { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-/* Tombol scan utama */
 .btn-scan-qr {
   display: flex; align-items: center; justify-content: center; gap: 10px;
   width: 100%; padding: 14px 18px; margin: 0 0 18px;
@@ -142,7 +137,6 @@
 .btn-scan-qr:active { transform: scale(.97); }
 .btn-scan-qr .ic-btn { font-size: 20px; }
 
-/* Tombol scan ulang (setelah berhasil) */
 .btn-rescan {
   display: inline-flex; align-items: center; gap: 6px; margin-top: 10px;
   background: transparent; border: 1.5px solid var(--line); border-radius: 8px;
@@ -151,18 +145,13 @@
 }
 .btn-rescan:hover { border-color: var(--ink); color: var(--ink); }
 
-/* ══════════════════════════════════════════════════
-   MODAL KAMERA QR
-   ══════════════════════════════════════════════════ */
+/* ── MODAL KAMERA QR ── */
 #qr-modal {
-  display: none;
-  position: fixed; inset: 0; z-index: 1000;
+  display: none; position: fixed; inset: 0; z-index: 1000;
   background: rgba(0,0,0,.82);
-  align-items: center; justify-content: center;
-  padding: 20px;
+  align-items: center; justify-content: center; padding: 20px;
 }
 #qr-modal.open { display: flex; }
-
 .qr-modal-box {
   background: #111827; border-radius: 20px; overflow: hidden;
   width: 100%; max-width: 380px;
@@ -173,7 +162,6 @@
   from { transform: translateY(30px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
-
 .qr-modal-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 16px 18px; background: #1f2937;
@@ -186,37 +174,23 @@
   transition: background .15s; font-family: inherit;
 }
 .qr-modal-close:hover { background: rgba(255,255,255,.2); }
-
-/* Area video */
 .qr-video-wrap {
-  position: relative; background: #000;
-  aspect-ratio: 1 / 1; overflow: hidden;
+  position: relative; background: #000; aspect-ratio: 1 / 1; overflow: hidden;
 }
-#qr-video {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-}
-
-/* Overlay bidik */
+#qr-video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .qr-overlay {
   position: absolute; inset: 0; pointer-events: none;
   display: flex; align-items: center; justify-content: center;
 }
-.qr-frame {
-  width: 62%; aspect-ratio: 1/1; position: relative;
-}
-/* 4 sudut frame */
-.qr-frame::before, .qr-frame::after,
-.qr-corner-bl, .qr-corner-br {
-  content: ''; position: absolute;
-  width: 22px; height: 22px;
+.qr-frame { width: 62%; aspect-ratio: 1/1; position: relative; }
+.qr-frame::before, .qr-frame::after, .qr-corner-bl, .qr-corner-br {
+  content: ''; position: absolute; width: 22px; height: 22px;
   border-color: #00e5a0; border-style: solid;
 }
 .qr-frame::before  { top: 0;    left: 0;  border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
 .qr-frame::after   { top: 0;    right: 0; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
 .qr-corner-bl { bottom: 0; left: 0;  border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
 .qr-corner-br { bottom: 0; right: 0; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
-
-/* Garis scan animasi */
 .qr-scanline {
   position: absolute; left: 8%; right: 8%; height: 2px;
   background: linear-gradient(90deg, transparent, #00e5a0, transparent);
@@ -228,21 +202,6 @@
   90%  { top: 88%; opacity: 1; }
   100% { top: 88%; opacity: 0; }
 }
-
-/* Latar semi-transparan di luar frame */
-.qr-shade {
-  position: absolute; inset: 0; pointer-events: none;
-}
-.qr-shade::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,.45);
-  /* cutout square transparan di tengah */
-  -webkit-mask: url(#cutout);
-  mask: url(#cutout);
-}
-
-/* Status deteksi bawah modal */
 .qr-status {
   padding: 14px 18px; text-align: center;
   font-size: 13px; color: rgba(255,255,255,.6);
@@ -259,8 +218,6 @@
 }
 .qr-status.detected { color: #00e5a0; font-weight: 700; }
 .qr-status.err      { color: #ef4444; }
-
-/* Validating spinner */
 .qr-validating {
   display: none; position: absolute; inset: 0;
   background: rgba(0,0,0,.75); align-items: center; justify-content: center;
@@ -313,25 +270,27 @@
 }
 .brand-logo img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
 .brand { display: flex; align-items: center; gap: 12px; }
-</style>
+  </style>
 
-<!-- Di bagian <head>, tambahkan konstanta URL -->
-<script>
-  // ⬇️ Ganti dengan URL deploy Apps Script Anda
-  var GAS_URL = 'https://script.google.com/macros/s/AKfycbwZ-bvTSzSXA_kmW4q7_N6QpkKFoO9yGTwtnaRTEQw5KKcrFpcJdeaTTjJVmVdrZLWx/exec';
+  <script>
+    /* ══════════════════════════════════════════════════════════
+       CONFIG — Ganti dengan URL deploy Apps Script Anda
+       ══════════════════════════════════════════════════════════ */
+    var GAS_URL = 'https://script.google.com/macros/s/AKfycbwZ-bvTSzSXA_kmW4q7_N6QpkKFoO9yGTwtnaRTEQw5KKcrFpcJdeaTTjJVmVdrZLWx/exec';
 
-  // Helper: panggil Apps Script via fetch
-  async function gasCall(action, data) {
-    var res = await fetch(GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' }, // ← harus text/plain bukan application/json
-      body: JSON.stringify({ action: action, data: data || {} })
-    });
-    var json = await res.json();
-    if (!json.success) throw new Error(json.msg || 'Server error');
-    return json.result;
-  }
-</script>
+    /* Helper: panggil Apps Script via fetch — SATU-SATUNYA cara
+       komunikasi dari GitHub Pages ke Apps Script              */
+    async function gasCall(action, data) {
+      var res = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: action, data: data || {} })
+      });
+      var json = await res.json();
+      if (!json.success) throw new Error(json.msg || 'Server error');
+      return json.result;
+    }
+  </script>
 </head>
 <body>
 
@@ -381,8 +340,6 @@
     <div class="qr-video-wrap">
       <video id="qr-video" autoplay muted playsinline></video>
       <canvas id="qr-canvas" style="display:none;"></canvas>
-
-      <!-- Shade + frame overlay -->
       <div class="qr-overlay">
         <div class="qr-frame">
           <div class="qr-corner-bl"></div>
@@ -390,8 +347,6 @@
           <div class="qr-scanline"></div>
         </div>
       </div>
-
-      <!-- Validating spinner overlay -->
       <div class="qr-validating" id="qr-validating">
         <div class="spinner"></div>
         <p>Memvalidasi titik…</p>
@@ -407,230 +362,225 @@
 <!-- ══ KONTEN UTAMA ══ -->
 <div id="main-content" style="display:none;">
 
-<div class="topbar">
-  <div class="brand">
-    <div class="brand-logo">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Logo_Kementrian_Imigrasi_dan_Pemasyarakatan_%282024%29.png/1280px-Logo_Kementrian_Imigrasi_dan_Pemasyarakatan_%282024%29.png" alt="Logo">
-    </div>
-    <div class="brand-text">
-      <div class="brand-name">Lapas Takalar Kontrol</div>
-      <div class="brand-sub">Kontrol Keliling</div>
-    </div>
-  </div>
-  <div class="nav-links">
-    <button class="nav-link active">Laporan</button>
-    <button class="nav-link" onclick="navTo('dashboard')">Dashboard</button>
-  </div>
-</div>
-
-<div class="page">
-
-  <!-- Status sesi + jam -->
-  <div class="sesi-bar">
-    <div class="sesi-indicator sesi-malam" id="sesi-indicator"></div>
-    <div class="sesi-meta">
-      <div class="sesi-label">Sesi Jaga Aktif</div>
-      <div class="sesi-value" id="sesi-value">—</div>
-    </div>
-    <div class="clock-wrap">
-      <div class="clock-live"><span class="live-dot"></span><span class="live-text">Live</span></div>
-      <div class="clock-time" id="clock">—</div>
-    </div>
-  </div>
-
-  <!-- Kartu shift -->
-  <div class="sesi-container">
-    <div class="shift-card" id="card-pagi">
-      <div class="shift-icon">☀️</div>
-      <div class="shift-info">
-        <div class="shift-label">Jaga Pagi</div>
-        <div class="shift-times">08:00 • 10:00 • 12:00</div>
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Logo_Kementrian_Imigrasi_dan_Pemasyarakatan_%282024%29.png/1280px-Logo_Kementrian_Imigrasi_dan_Pemasyarakatan_%282024%29.png" alt="Logo">
       </div>
-      <div class="shift-status" id="badge-pagi"></div>
-    </div>
-    <div class="shift-card" id="card-siang">
-      <div class="shift-icon">🌤️</div>
-      <div class="shift-info">
-        <div class="shift-label">Jaga Siang</div>
-        <div class="shift-times">14:00 • 16:00 • 18:00</div>
+      <div class="brand-text">
+        <div class="brand-name">Lapas Takalar Kontrol</div>
+        <div class="brand-sub">Kontrol Keliling</div>
       </div>
-      <div class="shift-status" id="badge-siang"></div>
     </div>
-    <div class="shift-card" id="card-malam">
-      <div class="shift-icon">🌙</div>
-      <div class="shift-info">
-        <div class="shift-label">Jaga Malam</div>
-        <div class="shift-times">20:00 • 22:00 • 00:00 • 02:00 • 04:00</div>
-      </div>
-      <div class="shift-status" id="badge-malam"></div>
+    <div class="nav-links">
+      <button class="nav-link active">Laporan</button>
+      <button class="nav-link" onclick="navTo('dashboard')">Dashboard</button>
     </div>
   </div>
 
-  <!-- Jadwal berikutnya -->
-  <div class="next-schedule-box">
-    <div class="next-schedule-icon">⏰</div>
-    <div class="next-schedule-content">
-      <div class="next-schedule-title">Target Kontrol Terdekat</div>
-      <div class="next-schedule-time">Pukul <span id="jamBerikutnya">--:--</span> WIB</div>
-    </div>
-  </div>
+  <div class="page">
 
-  <!-- ══════════════════════════════════════════════════
-       VERIFIKASI TITIK KONTROL — IN-APP QR SCANNER
-       ══════════════════════════════════════════════════ -->
-  <div class="scan-section">
-    <div class="scan-head">
-      <div class="card-title">Verifikasi Lokasi Kontrol</div>
-    </div>
-
-    <!-- State 1: Belum ada titik — tampil tombol scan -->
-    <div id="state-kosong">
-      <div class="titik-banner kosong">
-        <span class="ic">📷</span>
-        BELUM ADA TITIK TERVERIFIKASI
+    <!-- Status sesi + jam -->
+    <div class="sesi-bar">
+      <div class="sesi-indicator sesi-malam" id="sesi-indicator"></div>
+      <div class="sesi-meta">
+        <div class="sesi-label">Sesi Jaga Aktif</div>
+        <div class="sesi-value" id="sesi-value">—</div>
       </div>
-      <div class="titik-detail" style="padding-top:14px;">
-        <button class="btn-scan-qr" onclick="openQrModal()">
-          <span class="ic-btn">📷</span>
-          Scan QR Titik Kontrol
-        </button>
-        <div style="text-align:center; font-size:12px; color:var(--muted); padding-bottom:4px;">
-          Arahkan kamera ke QR Code yang tertempel di titik kontrol
+      <div class="clock-wrap">
+        <div class="clock-live"><span class="live-dot"></span><span class="live-text">Live</span></div>
+        <div class="clock-time" id="clock">—</div>
+      </div>
+    </div>
+
+    <!-- Kartu shift -->
+    <div class="sesi-container">
+      <div class="shift-card" id="card-pagi">
+        <div class="shift-icon">☀️</div>
+        <div class="shift-info">
+          <div class="shift-label">Jaga Pagi</div>
+          <div class="shift-times">08:00 • 10:00 • 12:00</div>
         </div>
+        <div class="shift-status" id="badge-pagi"></div>
+      </div>
+      <div class="shift-card" id="card-siang">
+        <div class="shift-icon">🌤️</div>
+        <div class="shift-info">
+          <div class="shift-label">Jaga Siang</div>
+          <div class="shift-times">14:00 • 16:00 • 18:00</div>
+        </div>
+        <div class="shift-status" id="badge-siang"></div>
+      </div>
+      <div class="shift-card" id="card-malam">
+        <div class="shift-icon">🌙</div>
+        <div class="shift-info">
+          <div class="shift-label">Jaga Malam</div>
+          <div class="shift-times">20:00 • 22:00 • 00:00 • 02:00 • 04:00</div>
+        </div>
+        <div class="shift-status" id="badge-malam"></div>
       </div>
     </div>
 
-    <!-- State 2: Titik berhasil terverifikasi -->
-    <div id="state-ok" style="display:none;">
-      <div class="titik-banner ok">
-        <span class="ic">✅</span>
-        TITIK KONTROL TERVERIFIKASI
+    <!-- Jadwal berikutnya -->
+    <div class="next-schedule-box">
+      <div class="next-schedule-icon">⏰</div>
+      <div class="next-schedule-content">
+        <div class="next-schedule-title">Target Kontrol Terdekat</div>
+        <div class="next-schedule-time">Pukul <span id="jamBerikutnya">--:--</span> WIB</div>
       </div>
-      <div class="titik-detail">
-        <div class="titik-card">
-          <div class="ic-wrap">📍</div>
-          <div>
-            <div class="nm" id="titik-nama-display">—</div>
-            <div class="zn" id="titik-zona-display">—</div>
+    </div>
+
+    <!-- Verifikasi Titik Kontrol -->
+    <div class="scan-section">
+      <div class="scan-head">
+        <div class="card-title">Verifikasi Lokasi Kontrol</div>
+      </div>
+
+      <!-- State 1: Belum ada titik -->
+      <div id="state-kosong">
+        <div class="titik-banner kosong">
+          <span class="ic">📷</span>
+          BELUM ADA TITIK TERVERIFIKASI
+        </div>
+        <div class="titik-detail" style="padding-top:14px;">
+          <button class="btn-scan-qr" onclick="openQrModal()">
+            <span class="ic-btn">📷</span>
+            Scan QR Titik Kontrol
+          </button>
+          <div style="text-align:center; font-size:12px; color:var(--muted); padding-bottom:4px;">
+            Arahkan kamera ke QR Code yang tertempel di titik kontrol
           </div>
         </div>
-        <p style="font-size:11px; color:var(--muted); margin-top:8px; padding-left:2px;">
-          🔒 Terdeteksi dari QR Code (ID: <span id="titik-id-display">—</span>)
-        </p>
-        <button class="btn-rescan" onclick="resetScan()">
-          🔄 Scan Titik Lain
-        </button>
       </div>
-    </div>
 
-    <!-- State 3: QR tidak dikenali / error validasi -->
-    <div id="state-err" style="display:none;">
-      <div class="titik-banner err">
-        <span class="ic">⚠️</span>
-        QR CODE TIDAK DIKENALI
-      </div>
-      <div class="titik-detail" style="padding-top:12px;">
-        <div style="font-size:13px; color:var(--muted); margin-bottom:12px;" id="err-msg-display">
-          ID titik tidak terdaftar atau sudah tidak aktif.
+      <!-- State 2: Titik berhasil terverifikasi -->
+      <div id="state-ok" style="display:none;">
+        <div class="titik-banner ok">
+          <span class="ic">✅</span>
+          TITIK KONTROL TERVERIFIKASI
         </div>
-        <button class="btn-scan-qr" onclick="openQrModal()" style="margin-bottom:0;">
-          <span class="ic-btn">🔄</span>
-          Coba Scan Ulang
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ FORM DATA PETUGAS ══ -->
-  <div id="form-area" class="form-locked">
-
-    <div class="card">
-      <div class="card-title">Data Petugas</div>
-      <div class="f-group">
-        <label class="f-label">Nama Petugas *</label>
-        <input type="text" class="f-input" id="inp-nama"
-          placeholder="Masukkan nama lengkap…" autocomplete="name" />
-      </div>
-
-      <div class="grid-2">
-        <div class="f-group">
-          <label class="f-label" id="label-regu">Regu / Fungsi *</label>
-          <select class="f-select" id="inp-regu" onchange="onReguChange()">
-            <option value="">Pilih regu / fungsi…</option>
-            <option value="1">Regu 1</option>
-            <option value="2">Regu 2</option>
-            <option value="3">Regu 3</option>
-            <option value="4">Regu 4</option>
-            <option value="staf" style="font-weight:700; color:#78350f;">👷 Staf KPLP (Kontrol Blok)</option>
-          </select>
-          <div class="staf-info-banner" id="staf-banner">
-            <span style="font-size:16px; flex-shrink:0;">ℹ️</span>
+        <div class="titik-detail">
+          <div class="titik-card">
+            <div class="ic-wrap">📍</div>
             <div>
-              Anda memilih <strong>Staf KPLP</strong>. Laporan Anda akan tercatat sebagai
-              <strong>Kontrol Staf Blok Hunian</strong> dan hanya dipantau pada
-              <strong>Sesi Pagi (07.00–13.00)</strong>.<br>
-              Pastikan titik yang di-scan adalah salah satu dari 6 area blok hunian.
+              <div class="nm" id="titik-nama-display">—</div>
+              <div class="zn" id="titik-zona-display">—</div>
             </div>
           </div>
+          <p style="font-size:11px; color:var(--muted); margin-top:8px; padding-left:2px;">
+            🔒 Terdeteksi dari QR Code (ID: <span id="titik-id-display">—</span>)
+          </p>
+          <button class="btn-rescan" onclick="resetScan()">
+            🔄 Scan Titik Lain
+          </button>
         </div>
+      </div>
 
+      <!-- State 3: QR tidak dikenali -->
+      <div id="state-err" style="display:none;">
+        <div class="titik-banner err">
+          <span class="ic">⚠️</span>
+          QR CODE TIDAK DIKENALI
+        </div>
+        <div class="titik-detail" style="padding-top:12px;">
+          <div style="font-size:13px; color:var(--muted); margin-bottom:12px;" id="err-msg-display">
+            ID titik tidak terdaftar atau sudah tidak aktif.
+          </div>
+          <button class="btn-scan-qr" onclick="openQrModal()" style="margin-bottom:0;">
+            <span class="ic-btn">🔄</span>
+            Coba Scan Ulang
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ FORM DATA PETUGAS ══ -->
+    <div id="form-area" class="form-locked">
+
+      <div class="card">
+        <div class="card-title">Data Petugas</div>
         <div class="f-group">
-          <label class="f-label">Sesi Jaga</label>
-          <select class="f-select" id="inp-sesi">
-            <option value="">— Otomatis —</option>
-            <option value="pagi">Pagi (07.00–13.00)</option>
-            <option value="siang">Siang (13.00–19.00)</option>
-            <option value="malam">Malam (19.00–07.00)</option>
-          </select>
+          <label class="f-label">Nama Petugas *</label>
+          <input type="text" class="f-input" id="inp-nama"
+            placeholder="Masukkan nama lengkap…" autocomplete="name" />
+        </div>
+
+        <div class="grid-2">
+          <div class="f-group">
+            <label class="f-label" id="label-regu">Regu / Fungsi *</label>
+            <select class="f-select" id="inp-regu" onchange="onReguChange()">
+              <option value="">Pilih regu / fungsi…</option>
+              <option value="1">Regu 1</option>
+              <option value="2">Regu 2</option>
+              <option value="3">Regu 3</option>
+              <option value="4">Regu 4</option>
+              <option value="staf" style="font-weight:700; color:#78350f;">👷 Staf KPLP (Kontrol Blok)</option>
+            </select>
+            <div class="staf-info-banner" id="staf-banner">
+              <span style="font-size:16px; flex-shrink:0;">ℹ️</span>
+              <div>
+                Anda memilih <strong>Staf KPLP</strong>. Laporan Anda akan tercatat sebagai
+                <strong>Kontrol Staf Blok Hunian</strong> dan hanya dipantau pada
+                <strong>Sesi Pagi (07.00–13.00)</strong>.<br>
+                Pastikan titik yang di-scan adalah salah satu dari 6 area blok hunian.
+              </div>
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label class="f-label">Sesi Jaga</label>
+            <select class="f-select" id="inp-sesi">
+              <option value="">— Otomatis —</option>
+              <option value="pagi">Pagi (07.00–13.00)</option>
+              <option value="siang">Siang (13.00–19.00)</option>
+              <option value="malam">Malam (19.00–07.00)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="f-group" style="margin-bottom:0;">
+          <label class="f-label">Keterangan Situasi</label>
+          <textarea class="f-textarea" id="inp-ket" rows="3"
+            placeholder="Situasi aman, catatan kondisi, temuan, dsb…"></textarea>
         </div>
       </div>
 
-      <div class="f-group" style="margin-bottom:0;">
-        <label class="f-label">Keterangan Situasi</label>
-        <textarea class="f-textarea" id="inp-ket" rows="3"
-          placeholder="Situasi aman, catatan kondisi, temuan, dsb…"></textarea>
+      <div class="card">
+        <div class="card-title">Dokumentasi Foto <span style="font-weight:400;color:var(--muted);font-size:11px;">(opsional)</span></div>
+        <div class="photo-drop" onclick="document.getElementById('file-input').click()">
+          <span style="font-size:28px;display:block;margin-bottom:6px;color:var(--muted);">🖼️</span>
+          <div style="font-size:13px;color:var(--muted);">Ketuk untuk menambah foto dokumentasi</div>
+          <div style="font-size:11px;color:var(--line-2);margin-top:4px;">JPG, PNG — maks. 5 foto</div>
+        </div>
+        <input type="file" id="file-input" accept="image/*" multiple style="display:none;" onchange="handlePhoto(this)">
+        <div class="photo-grid" id="photo-grid"></div>
       </div>
+
+      <button class="btn-primary" id="btn-submit" onclick="submitLog()">
+        ✅ Simpan Laporan Kontrol
+      </button>
+      <div style="height:28px;"></div>
+
     </div>
-
-    <div class="card">
-      <div class="card-title">Dokumentasi Foto <span style="font-weight:400;color:var(--muted);font-size:11px;">(opsional)</span></div>
-      <div class="photo-drop" onclick="document.getElementById('file-input').click()">
-        <span style="font-size:28px;display:block;margin-bottom:6px;color:var(--muted);">🖼️</span>
-        <div style="font-size:13px;color:var(--muted);">Ketuk untuk menambah foto dokumentasi</div>
-        <div style="font-size:11px;color:var(--line-2);margin-top:4px;">JPG, PNG — maks. 5 foto</div>
-      </div>
-      <input type="file" id="file-input" accept="image/*" multiple style="display:none;" onchange="handlePhoto(this)">
-      <div class="photo-grid" id="photo-grid"></div>
-    </div>
-
-    <button class="btn-primary" id="btn-submit" onclick="submitLog()">
-      ✅ Simpan Laporan Kontrol
-    </button>
-    <div style="height:28px;"></div>
-
-  </div>
-</div><!-- end page -->
+  </div><!-- end page -->
 </div><!-- end #main-content -->
 
 <div class="toast" id="toast"></div>
 
-<!-- jsQR — library decode QR dari frame kamera, jalan 100% di browser -->
+<!-- jsQR: decode QR dari frame kamera, berjalan 100% di browser -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
 <script>
 /* ══════════════════════════════════════════════════════════
-   CONFIG
+   STATE
    ══════════════════════════════════════════════════════════ */
-var BASE_URL = 'https://script.google.com/macros/s/AKfycbwZ-bvTSzSXA_kmW4q7_N6QpkKFoO9yGTwtnaRTEQw5KKcrFpcJdeaTTjJVmVdrZLWx/exec';
-
-/* State titik kontrol aktif (diisi setelah scan+validasi berhasil) */
+var BASE_URL     = GAS_URL; // sudah didefinisikan di atas
 var scannedTitik = null;
-
-/* ── QR Scanner state ── */
-var qrStream     = null;   // MediaStream kamera aktif
-var qrRafId      = null;   // requestAnimationFrame id
-var qrCooldown   = false;  // cegah double-decode
-var qrValidating = false;  // sedang kirim ke server
+var qrStream     = null;
+var qrRafId      = null;
+var qrCooldown   = false;
+var qrValidating = false;
+var photoFiles   = [];
 
 /* ══════════════════════════════════════════════════════════
    PIN
@@ -667,20 +617,21 @@ function updateDots() {
   }
 }
 
-function validatePin() {
-  google.script.run
-    .withSuccessHandler(function(ok) {
-      if (ok) {
-        try { sessionStorage.setItem('lk_pin_ok', '1'); } catch(e) {}
-        pinAttempts = 0;
-        showMainContent();
-      } else {
-        pinAttempts++;
-        showPinError(MAX_ATTEMPTS - pinAttempts);
-      }
-    })
-    .withFailureHandler(function() { showPinError(-1); })
-    .checkAdminPin(pinBuffer);
+/* ✅ Menggunakan gasCall — bukan google.script.run */
+async function validatePin() {
+  try {
+    var result = await gasCall('checkPin', { pin: pinBuffer });
+    if (result.ok) {
+      try { sessionStorage.setItem('lk_pin_ok', '1'); } catch(e) {}
+      pinAttempts = 0;
+      showMainContent();
+    } else {
+      pinAttempts++;
+      showPinError(MAX_ATTEMPTS - pinAttempts);
+    }
+  } catch(e) {
+    showPinError(-1);
+  }
 }
 
 function showPinError(sisa) {
@@ -706,14 +657,14 @@ function clearPinError() {
 
 function lockKeypad() {
   pinLocked = true;
-  var keys = document.querySelectorAll('.pin-key');
-  var lMsg = el('pin-locked-msg');
+  var keys  = document.querySelectorAll('.pin-key');
+  var lMsg  = el('pin-locked-msg');
   var attEl = el('pin-attempts');
   var msgEl = el('pin-error-msg');
   keys.forEach(function(k) { k.style.opacity = '.3'; k.style.pointerEvents = 'none'; });
   if (lMsg)  lMsg.style.display = 'block';
-  if (attEl) attEl.textContent = '';
-  if (msgEl) msgEl.textContent = '';
+  if (attEl) attEl.textContent  = '';
+  if (msgEl) msgEl.textContent  = '';
   var remaining = LOCK_SECONDS;
   var cdEl = el('lock-countdown');
   lockTimer = setInterval(function() {
@@ -756,28 +707,23 @@ checkPinSession();
 /* ══════════════════════════════════════════════════════════
    INIT HALAMAN UTAMA
    ══════════════════════════════════════════════════════════ */
-var photoFiles = [];
-
 function initMainPage() {
   startClock();
 
   var sn = localStorage.getItem('lk_nama');
   var sr = localStorage.getItem('lk_regu');
   if (sn) el('inp-nama').value = sn;
-  if (sr) {
-    el('inp-regu').value = sr;
-    onReguChange();
-  }
+  if (sr) { el('inp-regu').value = sr; onReguChange(); }
 
-  google.script.run
-    .withSuccessHandler(function(info) {
-      if (info && info.nextControl) el('jamBerikutnya').textContent = info.nextControl;
-    })
-    .getInfoPetugasPage();
+  /* ✅ gasCall — bukan google.script.run */
+  gasCall('getInfo', {}).then(function(info) {
+    if (info && info.nextControl)
+      el('jamBerikutnya').textContent = info.nextControl;
+  }).catch(function() {});
 }
 
 /* ══════════════════════════════════════════════════════════
-   QR MODAL — buka / tutup
+   QR MODAL
    ══════════════════════════════════════════════════════════ */
 function openQrModal() {
   var modal = el('qr-modal');
@@ -795,36 +741,28 @@ function closeQrModal() {
 }
 
 /* ══════════════════════════════════════════════════════════
-   KAMERA — start / stop
+   KAMERA
    ══════════════════════════════════════════════════════════ */
 function startCamera() {
   var video = el('qr-video');
-
-  // Preferensi kamera belakang (environment) untuk scan QR
-  var constraints = {
-    video: {
-      facingMode: { ideal: 'environment' },
-      width:  { ideal: 1280 },
-      height: { ideal: 720 }
-    }
-  };
-
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then(function(stream) {
-      qrStream      = stream;
-      video.srcObject = stream;
-      video.onloadedmetadata = function() {
-        video.play();
-        requestAnimationFrame(scanFrame);
-      };
-    })
-    .catch(function(err) {
-      var msg = 'Tidak dapat mengakses kamera.';
-      if (err.name === 'NotAllowedError')  msg = 'Izin kamera ditolak. Berikan akses kamera di pengaturan browser.';
-      if (err.name === 'NotFoundError')    msg = 'Kamera tidak ditemukan di perangkat ini.';
-      if (err.name === 'NotReadableError') msg = 'Kamera sedang digunakan aplikasi lain.';
-      setQrStatus('err', msg);
-    });
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+  })
+  .then(function(stream) {
+    qrStream = stream;
+    video.srcObject = stream;
+    video.onloadedmetadata = function() {
+      video.play();
+      requestAnimationFrame(scanFrame);
+    };
+  })
+  .catch(function(err) {
+    var msg = 'Tidak dapat mengakses kamera.';
+    if (err.name === 'NotAllowedError')  msg = 'Izin kamera ditolak. Berikan akses kamera di pengaturan browser.';
+    if (err.name === 'NotFoundError')    msg = 'Kamera tidak ditemukan di perangkat ini.';
+    if (err.name === 'NotReadableError') msg = 'Kamera sedang digunakan aplikasi lain.';
+    setQrStatus('err', msg);
+  });
 }
 
 function stopCamera() {
@@ -838,10 +776,10 @@ function stopCamera() {
 }
 
 /* ══════════════════════════════════════════════════════════
-   SCAN LOOP — ambil frame tiap animasi, decode dengan jsQR
+   SCAN LOOP
    ══════════════════════════════════════════════════════════ */
 function scanFrame() {
-  if (!el('qr-modal').classList.contains('open')) return; // modal sudah tutup
+  if (!el('qr-modal').classList.contains('open')) return;
   if (qrValidating) { qrRafId = requestAnimationFrame(scanFrame); return; }
 
   var video  = el('qr-video');
@@ -865,24 +803,22 @@ function scanFrame() {
   if (code && !qrCooldown) {
     qrCooldown = true;
     handleQrData(code.data);
-    return; // stop loop — akan dilanjut atau ditutup setelah validasi
+    return;
   }
 
   qrRafId = requestAnimationFrame(scanFrame);
 }
 
 /* ══════════════════════════════════════════════════════════
-   HANDLE DATA QR — extract ID lalu validasi ke server
+   HANDLE QR DATA
+   ✅ Diganti dari google.script.run ke gasCall
    ══════════════════════════════════════════════════════════ */
-function handleQrData(rawData) {
-  // Coba extract ?id= dari URL (pola QR lama masih didukung)
-  // atau pakai raw data langsung sebagai ID
+async function handleQrData(rawData) {
   var titikId = '';
   try {
     var url = new URL(rawData);
     titikId = url.searchParams.get('id') || '';
   } catch(e) {
-    // bukan URL, anggap raw data adalah ID titik langsung
     titikId = rawData.trim();
   }
 
@@ -896,44 +832,38 @@ function handleQrData(rawData) {
     return;
   }
 
-  // Tampilkan spinner validasi
   qrValidating = true;
   el('qr-validating').classList.add('show');
   setQrStatus('detected', '🔍 Memvalidasi: ' + titikId);
 
-  // Validasi ke server (Code.gs validateTitik sudah ada, tidak perlu ubah)
-  google.script.run
-    .withSuccessHandler(function(titikObj) {
-      el('qr-validating').classList.remove('show');
-      qrValidating = false;
+  /* ✅ gasCall — bukan google.script.run.validateTitik */
+  try {
+    var result = await gasCall('validateTitik', { titikId: titikId });
+    el('qr-validating').classList.remove('show');
+    qrValidating = false;
 
-      if (titikObj) {
-        // ✅ Titik valid
-        scannedTitik = titikObj;
-        closeQrModal();
-        showStateTitikOk(titikObj);
-        // Aktifkan form
-        el('form-area').className = 'form-unlocked';
-        toast('✅ Titik terverifikasi: ' + titikObj.nama, 'ok');
-        // Vibrate jika didukung
-        if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-      } else {
-        // ❌ ID tidak ditemukan / tidak aktif
-        closeQrModal();
-        showStateErr('ID titik "' + titikId + '" tidak terdaftar atau sudah tidak aktif.<br>Pastikan Anda scan QR resmi yang tertempel di titik kontrol.');
-      }
-    })
-    .withFailureHandler(function(e) {
-      el('qr-validating').classList.remove('show');
-      qrValidating = false;
+    var titikObj = result.titik;
+    if (titikObj) {
+      scannedTitik = titikObj;
       closeQrModal();
-      showStateErr('Koneksi ke server gagal: ' + (e.message || 'coba lagi.'));
-    })
-    .validateTitik(titikId);
+      showStateTitikOk(titikObj);
+      el('form-area').className = 'form-unlocked';
+      toast('✅ Titik terverifikasi: ' + titikObj.nama, 'ok');
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    } else {
+      closeQrModal();
+      showStateErr('ID titik "' + titikId + '" tidak terdaftar atau sudah tidak aktif.<br>Pastikan Anda scan QR resmi yang tertempel di titik kontrol.');
+    }
+  } catch(e) {
+    el('qr-validating').classList.remove('show');
+    qrValidating = false;
+    closeQrModal();
+    showStateErr('Koneksi ke server gagal: ' + (e.message || 'coba lagi.'));
+  }
 }
 
 /* ══════════════════════════════════════════════════════════
-   STATE UI — kosong / ok / err
+   STATE UI
    ══════════════════════════════════════════════════════════ */
 function showStateTitikOk(titik) {
   el('state-kosong').style.display = 'none';
@@ -1026,8 +956,10 @@ function removePhoto(idx) {
   if (item) item.remove();
 }
 
-/* ── SUBMIT LOG ── */
-function submitLog() {
+/* ── SUBMIT LOG ──
+   ✅ Diganti dari google.script.run.simpanLog ke gasCall
+   ══════════════════════════════════════════════════════════ */
+async function submitLog() {
   if (!scannedTitik) {
     toast('Titik kontrol belum terverifikasi. Tap "Scan QR" terlebih dahulu.', 'err');
     return;
@@ -1048,40 +980,13 @@ function submitLog() {
   localStorage.setItem('lk_regu', reguVal);
 
   var btn = el('btn-submit');
-  btn.disabled = true;
+  btn.disabled  = true;
   btn.innerHTML = '⏳ Menyimpan…';
 
   var fotoAktif = photoFiles.filter(function(f){ return f !== null; });
 
-  google.script.run
-    .withSuccessHandler(function(res) {
-      btn.disabled = false;
-      btn.innerHTML = '✅ Simpan Laporan Kontrol';
-      if (res.success) {
-        toast('✅ Laporan berhasil disimpan — ' + res.waktu, 'ok');
-        el('inp-ket').value = '';
-        photoFiles = [];
-        el('photo-grid').innerHTML = '';
-        google.script.run
-          .withSuccessHandler(function(info) {
-            if (info && info.nextControl) el('jamBerikutnya').textContent = info.nextControl;
-          })
-          .getInfoPetugasPage();
-        // Reset titik — petugas harus scan ulang untuk titik berikutnya
-        setTimeout(function() {
-          resetScan();
-          toast('Scan QR titik berikutnya untuk lanjut keliling 📷', '');
-        }, 1800);
-      } else {
-        toast('Gagal menyimpan: ' + (res.msg || 'error tidak diketahui'), 'err');
-      }
-    })
-    .withFailureHandler(function(e) {
-      btn.disabled = false;
-      btn.innerHTML = '✅ Simpan Laporan Kontrol';
-      toast('Error Server: ' + (e.message || 'Koneksi terputus'), 'err');
-    })
-    .simpanLog({
+  try {
+    var res = await gasCall('simpanLog', {
       titikId    : scannedTitik.id,
       nama       : nama,
       regu       : reguSimpan,
@@ -1090,6 +995,34 @@ function submitLog() {
       fotoCount  : fotoAktif.length,
       attachFiles: fotoAktif
     });
+
+    btn.disabled  = false;
+    btn.innerHTML = '✅ Simpan Laporan Kontrol';
+
+    if (res.success) {
+      toast('✅ Laporan berhasil disimpan — ' + res.waktu, 'ok');
+      el('inp-ket').value = '';
+      photoFiles = [];
+      el('photo-grid').innerHTML = '';
+
+      /* Perbarui jam kontrol berikutnya */
+      gasCall('getInfo', {}).then(function(info) {
+        if (info && info.nextControl)
+          el('jamBerikutnya').textContent = info.nextControl;
+      }).catch(function() {});
+
+      setTimeout(function() {
+        resetScan();
+        toast('Scan QR titik berikutnya untuk lanjut keliling 📷', '');
+      }, 1800);
+    } else {
+      toast('Gagal menyimpan: ' + (res.msg || 'error tidak diketahui'), 'err');
+    }
+  } catch(e) {
+    btn.disabled  = false;
+    btn.innerHTML = '✅ Simpan Laporan Kontrol';
+    toast('Error Server: ' + (e.message || 'Koneksi terputus'), 'err');
+  }
 }
 
 /* ── JAM & SESI ── */
