@@ -905,8 +905,10 @@ function setQrStatus(type, msg) {
    ══════════════════════════════════════════════════════════ */
 function navTo(page) {
   stopCamera();
-  var url = BASE_URL + '?page=' + page;
-  try { window.top.location.href = url; } catch(e) { window.location.href = url; }
+  // Navigasi antar-halaman sekarang di domain Vercel yang sama,
+  // bukan lagi ke GAS_URL (yang hanya dipakai untuk gasCall/API).
+  var url = (page === 'dashboard') ? 'dashboard.html' : 'index.html';
+  window.location.href = url;
 }
 
 /* ── REGU / STAF ── */
