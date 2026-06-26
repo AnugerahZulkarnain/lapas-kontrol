@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>Dashboard KPLP — Lapas Kontrol</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .dash-header {
+    background: var(--ink); color: white; border-radius: var(--r-lg);
+    padding: 20px 22px; margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; box-shadow: var(--sh-lg);
+  }
+  .dash-date  { font-size: 10px; color: rgba(255,255,255,.5); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+  .dash-title { font-size: 18px; font-weight: 700; }
+  .sesi-badge { padding: 6px 14px; border-radius: 99px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  .sb-pagi  { background: rgba(245,192,74,.2); color: var(--amber-mid); border: 1px solid rgba(245,192,74,.3); }
+  .sb-siang { background: rgba(194,44,44,.2);  color: #f87171;          border: 1px solid rgba(194,44,44,.3); }
+  .sb-malam { background: rgba(26,95,168,.2);  color: #93c5fd;          border: 1px solid rgba(26,95,168,.3); }
+
+  .refresh-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px; }
+  .auto-lbl { font-size:11px; color:var(--muted); }
+  .cd-num { font-family:'DM Mono',monospace; font-weight:700; color:var(--amber); }
+
+  /* ── Kartu Regu Jaga ── */
+  .regu-card { background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:16px 18px; margin-bottom:10px; box-shadow:var(--sh); }
+  .regu-card.is-active { border-color: var(--amber); }
+  .regu-r1 { border-top: 3px solid #3b82f6; }
+  .regu-r2 { border-top: 3px solid #10b981; }
+  .regu-r3 { border-top: 3px solid var(--amber); }
+  .regu-r4 { border-top: 3px solid #8b5cf6; }
+
+  .regu-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .regu-name { font-size:14px; font-weight:700; color:var(--ink); margin-bottom:4px; }
+  .regu-pct  { font-size:13px; font-weight:700; color:var(--amber); font-family:'DM Mono',monospace; }
+  .pbar-track { height:5px; background:var(--surface-3); border-radius:99px; overflow:hidden; margin-bottom:10px; }
+  .pbar-fill  { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--amber) 0%,var(--amber-mid) 100%); transition:width .6s cubic-bezier(.34,1.56,.64,1); }
+  .pbar-fill.full { background:linear-gradient(90deg,var(--teal) 0%,var(--teal-mid) 100%); }
+  .cp-dots { display:flex; flex-wrap:wrap; gap:5px; }
+  .cp-dot { padding:3px 9px; border-radius:99px; font-size:10px; font-weight:600; border:1px solid var(--line); background:var(--surface-2); color:var(--muted); }
+  .cp-dot.visited { background:var(--teal-pale); color:var(--teal); border-color:transparent; }
+  .regu-last { margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-size:11px; color:var(--muted); }
+  .regu-last strong { color:var(--ink); }
+
+  /* ── KONTROL STAF ── */
+  .staf-section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .staf-section-title {
+    font-size: 14px; font-weight: 800; color: var(--ink); flex-grow: 1;
+  }
+  .badge-pagi-only {
+    background: #fff3cd; color: #856404; border: 1px solid #ffc107;
+    border-radius: 99px; padding: 3px 10px; font-size: 10px; font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .staf-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--r); padding: 14px 16px; margin-bottom: 10px;
+    box-shadow: var(--sh); border-top: 3px solid #f59e0b;
+    transition: border-color .2s;
+  }
+  .staf-card.staf-done { border-top-color: #10b981; border-color: #d1fae5; }
+  .staf-head { display:flex; align-items:center; justify-content:space-between; margin-bottom: 8px; }
+  .staf-name { font-size:13px; font-weight:700; color:var(--ink); }
+  .staf-pct  { font-size:13px; font-weight:700; color:#f59e0b; font-family:'DM Mono',monospace; }
+  .staf-pct.done { color: #10b981; }
+
+  .pbar-fill-staf { height:100%; border-radius:99px; background:linear-gradient(90deg,#f59e0b 0%,#fbbf24 100%); transition:width .6s cubic-bezier(.34,1.56,.64,1); }
+  .pbar-fill-staf.full { background:linear-gradient(90deg,#10b981 0%,#34d399 100%); }
+
+  .staf-dot { padding:3px 9px; border-radius:99px; font-size:10px; font-weight:600; border:1px solid #fde68a; background:#fffbeb; color:#92400e; }
+  .staf-dot.visited { background:#d1fae5; color:#065f46; border-color:transparent; }
+  .staf-last { margin-top:8px; padding-top:8px; border-top:1px solid var(--line); font-size:11px; color:var(--muted); }
+
+  .staf-inactive-panel {
+    background: var(--surface-2); border: 1.5px dashed var(--line);
+    border-radius: var(--r); padding: 24px 20px; text-align: center;
+  }
+  .staf-inactive-icon { font-size: 32px; margin-bottom: 8px; }
+  .staf-inactive-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .staf-aggregate {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a; border-radius: var(--r);
+    padding: 14px 16px; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .staf-agg-icon { font-size: 28px; }
+  .staf-agg-info { flex-grow: 1; }
+  .staf-agg-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #92400e; margin-bottom: 2px; }
+  .staf-agg-val { font-size: 18px; font-weight: 800; color: #78350f; font-family: 'DM Mono', monospace; }
+  .staf-agg-sub { font-size: 11px; color: #a16207; margin-top: 1px; }
+
+  /* ── Log table ── */
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  .tbl-wrap { overflow-x:auto; border-radius:var(--r); border:1px solid var(--line); }
+  .zona-chip { display:inline-block; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:600; background:var(--surface-2); color:var(--muted); border:1px solid var(--line); }
+  .no-log { text-align:center; padding:20px; color:var(--muted); font-size:12px; }
+  .log-new { animation: hi .8s ease-out; }
+  @keyframes hi { from { background:rgba(224,140,26,.15); } to { background:transparent; } }
+
+  /* ── Modal galeri foto ── */
+  .modal-gallery {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+    width: 100%; height: 100%; overflow: auto; background-color: rgba(13,27,42,0.85);
+    align-items: center; justify-content: center; backdrop-filter: blur(4px);
+  }
+  .modal-gallery.show { display: flex; }
+  .modal-content-gal {
+    background: var(--surface); padding: 20px; border-radius: var(--r-lg);
+    max-width: 560px; width: 95%;
+    max-height: 90vh; overflow-y: auto;
+    box-shadow: var(--sh-lg); border: 1px solid var(--line);
+    position: relative; animation: modalAnim 0.3s ease-out;
+  }
+  @keyframes modalAnim { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .modal-close-btn {
+    position: absolute; top: 12px; right: 14px; background: var(--surface-3);
+    border: none; font-size: 16px; font-weight: bold; width: 28px; height: 28px;
+    border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .img-grid-review {
+    display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px;
+    max-height: 70vh; overflow-y: auto; padding: 4px;
+  }
+  .img-review-item {
+    width: 100%; height: auto; max-height: 420px; object-fit: contain;
+    border-radius: var(--r); border: 1px solid var(--line); cursor: pointer;
+    transition: transform 0.2s; background: var(--surface-2); display: block;
+  }
+  .img-review-item:hover { transform: scale(1.01); }
+  .img-skeleton {
+    width: 100%; height: 220px; border-radius: var(--r);
+    background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
+    background-size: 200% 100%; animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .img-fallback-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; height: 100px; border-radius: var(--r);
+    border: 1.5px dashed var(--line-2); background: var(--surface-2);
+    color: var(--amber); font-size: 11px; font-weight: 600;
+    text-decoration: none; text-align: center; gap: 6px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .img-fallback-btn:hover { background: var(--amber-pale); }
+  .btn-view-photo {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: linear-gradient(135deg, #1a5fa8 0%, #2176d2 100%);
+    color: white; border: none; border-radius: 99px; padding: 5px 11px;
+    font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit;
+    letter-spacing: .02em; box-shadow: 0 2px 8px rgba(26,95,168,.25);
+    transition: filter .15s, transform .1s; white-space: nowrap;
+  }
+  .btn-view-photo:hover { filter: brightness(1.12); }
+  .btn-view-photo:active { transform: scale(.95); }
+
+  .brand-logo {
+    width: 42px; height: 42px; display: flex; align-items: center; justify-content: center;
+    background: white; border-radius: 8px; padding: 4px; overflow: hidden;
+  }
+  .brand-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Logo_Kementrian_Imigrasi_dan_Pemasyarakatan_%282024%29.png/1280px-Logo_Kementrian_Imigrasi_dan_Pemasyarakatan_%282024%29.png" alt="Logo Kemenimipas">
+    </div>
+    <div class="brand-text">
+      <div class="brand-name">Lapas Takalar Kontrol</div>
+      <div class="brand-sub">Dashboard KPLP</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="/index.html" class="nav-link">Laporan</a>
+    <button class="nav-link active">Dashboard</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="dash-header">
+    <div>
+      <div class="dash-date" id="dash-date">—</div>
+      <div class="dash-title">Dashboard Kontrol Keliling</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <div id="sesi-badge" class="sesi-badge sb-malam">Malam</div>
+      <div class="clock-wrap" style="text-align:right;">
+        <div class="clock-live">
+          <span class="live-dot"></span>
+          <span class="live-text">Live</span>
+        </div>
+        <div class="dash-title" id="clock">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="refresh-row">
+    <div class="auto-lbl">
+      Auto-refresh tiap <span class="cd-num" id="cd">60</span>s |
+      Target Kontrol Berikutnya: <span class="cd-num" id="next-control-lbl">—</span>
+    </div>
+    <button class="btn btn-sm btn-amber" id="rf-btn" onclick="loadDashboard()">🔄 Refresh</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-lbl">Laporan Hari Ini</div>
+      <div class="stat-val" id="s-today">—</div>
+      <div class="stat-sub">semua sesi</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Laporan Sesi Ini</div>
+      <div class="stat-val" id="s-sesi">—</div>
+      <div class="stat-sub" id="s-sesi-lbl">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Regu Aktif</div>
+      <div class="stat-val" id="s-regu">—</div>
+      <div class="stat-sub">dari 4 regu</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-lbl">Total Titik</div>
+      <div class="stat-val" id="s-titik">—</div>
+      <div class="stat-sub">titik aktif</div>
+    </div>
+  </div>
+
+  <!-- Kontrol Staf -->
+  <div class="card" style="margin-bottom:14px;" id="staf-section">
+    <div class="staf-section-header">
+      <div class="staf-section-title">👷 Kontrol Staf Blok Hunian</div>
+      <span class="badge-pagi-only">☀️ Khusus Pagi</span>
+    </div>
+    <div id="staf-container">
+      <div class="empty"><span class="empty-icon">⏳</span>Memuat data kontrol staf...</div>
+    </div>
+  </div>
+
+  <!-- Kontrol Keliling Regu -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Progres Kepatuhan Target Sesi Ini</div>
+    <div id="regu-container">
+      <div class="empty"><span class="empty-icon">⏳</span>Memuat data capaian regu...</div>
+    </div>
+  </div>
+
+  <!-- Log Table -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title">Log Kontrol Petugas</div>
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-sesi"  onclick="switchTab('sesi')">Sesi Ini</button>
+      <button class="tab-btn"        id="tab-semua" onclick="switchTab('semua')">Semua Log</button>
+    </div>
+    <div id="filter-row" style="display:none; margin-bottom:10px;">
+      <select class="f-select" id="f-sesi" onchange="applyFilter()" style="width:auto; font-size:12px; padding:7px 11px;">
+        <option value="">Semua Sesi</option>
+        <option value="pagi">Pagi</option>
+        <option value="siang">Siang</option>
+        <option value="malam">Malam</option>
+      </select>
+      <select class="f-select" id="f-regu" onchange="applyFilter()" style="width:auto; font-size:12px; padding:7px 11px; margin-left:6px;">
+        <option value="">Semua Regu</option>
+        <option value="Regu 1">Regu 1</option>
+        <option value="Regu 2">Regu 2</option>
+        <option value="Regu 3">Regu 3</option>
+        <option value="Regu 4">Regu 4</option>
+      </select>
+    </div>
+    <div id="panel-sesi"  class="tab-panel active"></div>
+    <div id="panel-semua" class="tab-panel"></div>
+  </div>
+
+  <div style="text-align:center; font-size:11px; color:var(--muted); padding-bottom:20px;">
+    Terakhir diperbarui: <span id="last-rf">—</span>
+  </div>
+
+</div><!-- end .page -->
+
+<!-- Modal Galeri Foto -->
+<div class="modal-gallery" id="gallery-modal">
+  <div class="modal-content-gal">
+    <button class="modal-close-btn" onclick="closeGallery()">×</button>
+    <h3 style="font-size:14px; font-weight:700; color:var(--ink); margin-bottom:4px;" id="gal-titik-nama">Review Dokumen Foto</h3>
+    <p style="font-size:11px; color:var(--muted);" id="gal-meta">Oleh Petugas Lapas</p>
+    <div class="img-grid-review" id="gal-images-container"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   CONFIG — URL Google Apps Script (sama dengan index.html)
+   ══════════════════════════════════════════════════════════ */
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbwZ-bvTSzSXA_kmW4q7_N6QpkKFoO9yGTwtnaRTEQw5KKcrFpcJdeaTTjJVmVdrZLWx/exec';
+
+/* Helper gasCall — identik dengan index.html */
+async function gasCall(action, data) {
+  var res = await fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify({ action: action, data: data || {} })
+  });
+  var json = await res.json();
+  if (!json.success) throw new Error(json.msg || 'Server error');
+  return json.result;
+}
+
+/* ══════════════════════════════════════════════════════════
+   STATE
+   ══════════════════════════════════════════════════════════ */
+var dashData = null, currentTab = 'sesi', cdVal = 60;
+var cdInt, rfInt;
+
+/* ══════════════════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════════════════ */
+startClock();
+updateHeader();
+loadDashboard();
+startAutoRefresh();
+
+function startClock() {
+  setInterval(function() {
+    var now = new Date();
+    var h = String(now.getHours()).padStart(2, '0');
+    var m = String(now.getMinutes()).padStart(2, '0');
+    var s = String(now.getSeconds()).padStart(2, '0');
+    var clockEl = document.getElementById('clock');
+    if (clockEl) clockEl.textContent = h + ':' + m + ':' + s;
+  }, 1000);
+}
+
+function updateHeader() {
+  var now   = new Date();
+  var s     = getSesi();
+  var badge = document.getElementById('sesi-badge');
+  var opts  = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  var dateEl = document.getElementById('dash-date');
+  if (dateEl) dateEl.textContent = now.toLocaleDateString('id-ID', opts);
+  if (badge) {
+    badge.className = 'sesi-badge sb-' + s;
+    badge.textContent = { pagi:'☀️ Pagi', siang:'🌤️ Siang', malam:'🌙 Malam' }[s] || s;
+  }
+}
+
+function startAutoRefresh() {
+  if (rfInt) clearInterval(rfInt);
+  rfInt = setInterval(function() { loadDashboard(); cdVal = 60; }, 60000);
+  if (cdInt) clearInterval(cdInt);
+  cdInt = setInterval(function() {
+    cdVal = Math.max(0, cdVal - 1);
+    var el = document.getElementById('cd');
+    if (el) el.textContent = cdVal || 60;
+  }, 1000);
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOAD DASHBOARD — ✅ gasCall (bukan google.script.run)
+   ══════════════════════════════════════════════════════════ */
+async function loadDashboard() {
+  var btn = document.getElementById('rf-btn');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span>'; }
+  cdVal = 60;
+
+  try {
+    var d = await gasCall('getDashboard', {});
+    dashData = d;
+    renderAll(d);
+    var el = document.getElementById('last-rf');
+    if (el) el.textContent = new Date().toLocaleTimeString('id-ID');
+    updateHeader();
+  } catch(e) {
+    toast('Gagal memuat: ' + (e.message || '?'), 'err');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '🔄 Refresh'; }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER ALL
+   ══════════════════════════════════════════════════════════ */
+function renderAll(d) {
+  document.getElementById('s-today').textContent    = d.totalToday;
+  document.getElementById('s-sesi').textContent     = d.totalSesi;
+  document.getElementById('s-regu').textContent     = d.activeRegu;
+  document.getElementById('s-titik').textContent    = (d.titikList || []).length;
+  document.getElementById('s-sesi-lbl').textContent = getSesiLabel(d.sesi);
+  document.getElementById('next-control-lbl').textContent = d.nextControl || '-';
+
+  renderStaf(d);
+  renderRegu(d);
+
+  var logsSesiIni = (d.recentLogs || []).filter(function(l) {
+    return String(l.sesi).toLowerCase() === String(d.sesi).toLowerCase();
+  });
+  renderLogTable('panel-sesi',  logsSesiIni);
+  renderLogTable('panel-semua', d.recentLogs);
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER KONTROL STAF
+   ══════════════════════════════════════════════════════════ */
+function renderStaf(d) {
+  var el = document.getElementById('staf-container');
+  var sk = d.stafKontrol;
+
+  if (!sk) {
+    el.innerHTML = '<div class="no-log">Data kontrol staf tidak tersedia.</div>';
+    return;
+  }
+
+  if (!sk.aktif) {
+    var sesiSkrg  = getSesi();
+    var ikonSesi  = { pagi: '☀️', siang: '🌤️', malam: '🌙' }[sesiSkrg] || '🕐';
+    var labelSesi = { pagi: 'Pagi', siang: 'Siang', malam: 'Malam' }[sesiSkrg] || sesiSkrg;
+    el.innerHTML =
+      '<div class="staf-inactive-panel">' +
+        '<div class="staf-inactive-icon">' + ikonSesi + '</div>' +
+        '<div class="staf-inactive-text">' +
+          'Saat ini Sesi <strong>' + labelSesi + '</strong> — ' +
+          'Kontrol Staf Blok Hunian <strong>hanya berjalan pada Sesi Pagi (07.00–13.00)</strong>.<br><br>' +
+          '📌 Data laporan kontrol staf akan otomatis muncul di sini <strong>mulai pukul 07.00</strong>.' +
+        '</div>' +
+      '</div>';
+    return;
+  }
+
+  var titikList = sk.stafTitikList || [];
+  var namaList  = sk.namaStaf     || [];
+  var sudah     = sk.sudahDikontrol || [];
+  var byStaf    = sk.byStaf || {};
+  var aggPct    = sk.aggregatePct || 0;
+
+  var aggHtml =
+    '<div class="staf-aggregate">' +
+      '<div class="staf-agg-icon">🏠</div>' +
+      '<div class="staf-agg-info">' +
+        '<div class="staf-agg-label">Coverage Keseluruhan Blok Hunian</div>' +
+        '<div class="staf-agg-val">' + sudah.length + ' / ' + titikList.length + ' Titik Dikontrol</div>' +
+        '<div class="staf-agg-sub">Agregat dari semua staf yang bertugas hari ini</div>' +
+      '</div>' +
+      '<div style="text-align:right;">' +
+        '<div style="font-size:22px;font-weight:800;color:#78350f;font-family:\'DM Mono\',monospace;">' + aggPct + '%</div>' +
+        '<div class="pbar-track" style="width:80px;margin-top:4px;">' +
+          '<div class="pbar-fill-staf' + (aggPct >= 100 ? ' full' : '') + '" style="width:' + aggPct + '%"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  if (!namaList.length) {
+    el.innerHTML = aggHtml +
+      '<div class="staf-inactive-panel">' +
+        '<div class="staf-inactive-icon">📋</div>' +
+        '<div class="staf-inactive-text">' +
+          'Belum ada laporan kontrol staf pada pagi ini.<br>' +
+          'Staf yang bertugas perlu melakukan scan QR di 6 titik blok hunian.' +
+        '</div>' +
+      '</div>';
+    return;
+  }
+
+  var cardsHtml = '';
+  namaList.forEach(function(nama) {
+    var sd  = byStaf[nama];
+    if (!sd) return;
+    var pct  = sd.pct || 0;
+    var done = pct >= 100;
+    cardsHtml +=
+      '<div class="staf-card' + (done ? ' staf-done' : '') + '">' +
+        '<div class="staf-head">' +
+          '<div>' +
+            '<div class="staf-name">👤 ' + escH(nama) + '</div>' +
+            '<span class="badge ' + (done ? 'b-ok' : 'b-warn') + '">' + sd.detail + ' titik terkontrol</span>' +
+          '</div>' +
+          '<div class="staf-pct' + (done ? ' done' : '') + '">' + pct + '%</div>' +
+        '</div>' +
+        '<div class="pbar-track">' +
+          '<div class="pbar-fill-staf' + (done ? ' full' : '') + '" style="width:' + pct + '%"></div>' +
+        '</div>' +
+        '<div class="cp-dots">';
+
+    titikList.forEach(function(t) {
+      var isVisited =
+        (sd.visited || []).some(function(vid){ return String(vid).trim() === String(t.id).trim(); }) ||
+        (sd.visitedNama || []).some(function(vn){ return String(vn).trim().toLowerCase() === String(t.nama).trim().toLowerCase(); });
+      cardsHtml += '<span class="cp-dot staf-dot' + (isVisited ? ' visited' : '') + '">' + escH(t.nama) + '</span>';
+    });
+
+    cardsHtml += '</div>';
+    if (sd.lastLog) {
+      cardsHtml +=
+        '<div class="staf-last">Terakhir: <strong>' + escH(sd.lastLog.titikNama) + '</strong>' +
+        ' pukul <strong>' + escH(sd.lastLog.waktu) + '</strong></div>';
+    }
+    cardsHtml += '</div>';
+  });
+
+  el.innerHTML = aggHtml + cardsHtml;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDER REGU JAGA
+   ══════════════════════════════════════════════════════════ */
+function renderRegu(d) {
+  var el   = document.getElementById('regu-container');
+  var tl   = d.titikList || [];
+  var topC = ['regu-r1','regu-r2','regu-r3','regu-r4'];
+  var bC   = ['b-r1','b-r2','b-r3','b-r4'];
+  var html = '';
+
+  for (var r = 1; r <= 4; r++) {
+    var rd = null;
+    if (d.byRegu) {
+      rd = d.byRegu['regu' + r] || d.byRegu['Regu ' + r] || d.byRegu[r];
+    }
+    if (!rd) {
+      rd = { regu: 'Regu ' + r, pct: 0, visited: [], total: 0, target: 3, detailKontrol: '0/0' };
+    }
+    var pct          = rd.pct || 0;
+    var visitedArray = rd.visited || [];
+    var full         = pct >= 100;
+    var reguLogs     = (d.recentLogs || []).filter(function(l) {
+      return l.regu === ('Regu ' + r) && String(l.sesi).toLowerCase() === String(d.sesi).toLowerCase();
+    });
+    var lastLog = reguLogs.length > 0 ? reguLogs[0] : null;
+
+    html += '<div class="regu-card ' + topC[r-1] + (rd.total > 0 ? ' is-active' : '') + '">';
+    html += '<div class="regu-head">';
+    html += '  <div><div class="regu-name">' + escH(rd.regu || ('Regu ' + r)) + '</div>';
+    html += '  <div><span class="badge ' + bC[r-1] + '">' + rd.detailKontrol + ' Akumulasi Titik (Target: ' + rd.target + 'x Keliling)</span>';
+    html += '  <span class="badge ' + (rd.total > 0 ? 'b-ok' : 'b-warn') + '" style="margin-left:4px;">' + (rd.total > 0 ? '✓ Aktif' : '○ Belum') + '</span></div></div>';
+    html += '  <div class="regu-pct">' + pct + '%</div>';
+    html += '</div>';
+    html += '<div class="pbar-track"><div class="pbar-fill' + (full ? ' full' : '') + '" style="width:' + pct + '%"></div></div>';
+    if (tl.length) {
+      html += '<div class="cp-dots">';
+      tl.forEach(function(t) {
+        var isVisited = visitedArray.some(function(vId) {
+          return String(vId).trim() === String(t.id).trim();
+        });
+        html += '<span class="cp-dot' + (isVisited ? ' visited' : '') + '">' + escH(t.nama) + '</span>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="regu-last">';
+    if (lastLog) {
+      html += 'Terakhir: <strong>' + escH(lastLog.titikNama) + '</strong> pukul <strong>' + escH(lastLog.waktu) + '</strong> oleh <strong>' + escH(lastLog.nama) + '</strong>';
+    } else {
+      html += 'Belum ada aktivitas kontrol keliling pada sesi ini.';
+    }
+    html += '</div></div>';
+  }
+  if (el) el.innerHTML = html || '<div class="empty"><span class="empty-icon">📭</span>Data tidak tersedia.</div>';
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOG TABLE
+   ══════════════════════════════════════════════════════════ */
+function renderLogTable(panelId, logs) {
+  var panel = document.getElementById(panelId);
+  if (!panel) return;
+  if (!logs || !logs.length) { panel.innerHTML = '<div class="no-log">Belum ada log.</div>'; return; }
+
+  var rb = ['b-r1','b-r2','b-r3','b-r4'];
+  var sb = { pagi:'b-pagi', siang:'b-siang', malam:'b-malam' };
+
+  var html = '<div class="tbl-wrap"><table class="log-tbl"><thead><tr>';
+  html += '<th>Waktu</th><th>Petugas</th><th>Regu</th><th>Sesi</th><th>Titik</th><th>Zona</th><th>Keterangan</th><th>Foto</th>';
+  html += '</tr></thead><tbody>';
+
+  logs.forEach(function(l, i) {
+    var rn = parseInt((l.regu || '').replace('Regu ', '')) - 1;
+    var logDataAttr =
+      'data-titik="' + escH(l.titikNama) + '" ' +
+      'data-meta="'  + escH(l.nama + ' (' + l.regu + ') - ' + l.waktu) + '" ' +
+      'data-urls="'  + escH(l.fotoUrls || '') + '"';
+
+    html += '<tr class="' + (i === 0 ? 'log-new' : '') + '">';
+    html += '<td style="font-family:\'DM Mono\',monospace;font-size:11px;white-space:nowrap;">' +
+              escH(l.waktu) + '<br><span style="color:var(--muted);font-size:10px;">' + escH(l.tanggal) + '</span></td>';
+    html += '<td style="font-weight:600;white-space:nowrap;">' + escH(l.nama) + '</td>';
+    html += '<td><span class="badge ' + (rb[rn] || 'b-warn') + '">' + escH(l.regu) + '</span></td>';
+    html += '<td><span class="badge ' + (sb[l.sesi] || 'b-warn') + '">' + escH(l.sesi) + '</span></td>';
+    html += '<td style="font-weight:600;white-space:nowrap;">' + escH(l.titikNama) + '</td>';
+    html += '<td><span class="zona-chip">' + escH(l.zona) + '</span></td>';
+    html += '<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;color:var(--muted);font-size:11px;">' +
+              escH(l.keterangan || '—') + '</td>';
+    html += '<td style="text-align:center;">';
+    if (l.fotoCount > 0) {
+      html += '<button class="btn-view-photo" ' + logDataAttr +
+              ' onclick="openGalleryFromBtn(this)" title="Lihat ' + l.fotoCount + ' foto">📸 ' + l.fotoCount + ' Foto</button>';
+    } else {
+      html += '—';
+    }
+    html += '</td></tr>';
+  });
+
+  html += '</tbody></table></div>';
+  panel.innerHTML = html;
+}
+
+/* ══════════════════════════════════════════════════════════
+   GALERI FOTO
+   ══════════════════════════════════════════════════════════ */
+function normalizeDriveUrl(rawUrl) {
+  var url = rawUrl.trim();
+  if (!url) return '';
+  var lh3Match = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_\-]+)/);
+  if (lh3Match) return 'https://drive.google.com/thumbnail?id=' + lh3Match[1] + '&sz=w800';
+  var ucMatch = url.match(/[?&]id=([a-zA-Z0-9_\-]+)/);
+  if (ucMatch && url.includes('drive.google.com')) return 'https://drive.google.com/thumbnail?id=' + ucMatch[1] + '&sz=w800';
+  var fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_\-]+)\//);
+  if (fileMatch) return 'https://drive.google.com/thumbnail?id=' + fileMatch[1] + '&sz=w800';
+  if (url.includes('drive.google.com/thumbnail')) return url;
+  return url;
+}
+
+function extractFileId(url) {
+  var lh3Match  = url.match(/lh3\.googleusercontent\.com\/d\/([a-zA-Z0-9_\-]+)/);
+  if (lh3Match)  return lh3Match[1];
+  var ucMatch   = url.match(/[?&]id=([a-zA-Z0-9_\-]+)/);
+  if (ucMatch)   return ucMatch[1];
+  var fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_\-]+)\//);
+  if (fileMatch) return fileMatch[1];
+  return null;
+}
+
+function openGalleryFromBtn(btn) {
+  openGallery(
+    btn.getAttribute('data-titik') || '—',
+    btn.getAttribute('data-meta')  || '—',
+    btn.getAttribute('data-urls')  || ''
+  );
+}
+
+function openGallery(titikNama, metaText, csvUrls) {
+  document.getElementById('gal-titik-nama').textContent = titikNama;
+  document.getElementById('gal-meta').textContent       = metaText;
+  var container = document.getElementById('gal-images-container');
+  container.innerHTML = '';
+
+  if (!csvUrls || !csvUrls.trim()) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:10px;text-align:center;">Tidak ada foto pada laporan ini.</div>';
+    document.getElementById('gallery-modal').classList.add('show');
+    return;
+  }
+
+  var urls = csvUrls.split(',').map(function(u){ return u.trim(); }).filter(Boolean);
+  if (!urls.length) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--muted);padding:10px;text-align:center;">URL foto tidak ditemukan.</div>';
+    document.getElementById('gallery-modal').classList.add('show');
+    return;
+  }
+
+  urls.forEach(function(rawUrl) {
+    var wrapper  = document.createElement('div');
+    wrapper.style.cssText = 'position:relative;';
+    var skeleton = document.createElement('div');
+    skeleton.className = 'img-skeleton';
+    wrapper.appendChild(skeleton);
+    container.appendChild(wrapper);
+
+    var displayUrl = normalizeDriveUrl(rawUrl);
+    var fileId     = extractFileId(rawUrl) || extractFileId(displayUrl);
+    var viewUrl    = fileId ? 'https://drive.google.com/file/d/' + fileId + '/view' : rawUrl;
+
+    var img = document.createElement('img');
+    img.className      = 'img-review-item';
+    img.alt            = 'Dokumentasi';
+    img.referrerPolicy = 'no-referrer';
+    img.onload  = function() {
+      if (wrapper.contains(skeleton)) wrapper.removeChild(skeleton);
+      wrapper.appendChild(img);
+    };
+    img.onerror = function() {
+      if (wrapper.contains(skeleton)) wrapper.removeChild(skeleton);
+      var fb = document.createElement('a');
+      fb.href = viewUrl; fb.target = '_blank'; fb.rel = 'noopener noreferrer';
+      fb.className = 'img-fallback-btn';
+      fb.innerHTML = '<span style="font-size:20px;">🖼️</span><span>Buka Foto<br>di Tab Baru</span>';
+      wrapper.appendChild(fb);
+    };
+    img.onclick = function() { window.open(viewUrl, '_blank', 'noopener'); };
+    img.src = displayUrl;
+  });
+
+  document.getElementById('gallery-modal').classList.add('show');
+}
+
+function closeGallery() {
+  document.getElementById('gallery-modal').classList.remove('show');
+  setTimeout(function() { document.getElementById('gal-images-container').innerHTML = ''; }, 300);
+}
+
+/* ══════════════════════════════════════════════════════════
+   TAB & FILTER
+   ══════════════════════════════════════════════════════════ */
+function switchTab(t) {
+  currentTab = t;
+  ['sesi','semua'].forEach(function(id) {
+    var tabBtn  = document.getElementById('tab-' + id);
+    var panelEl = document.getElementById('panel-' + id);
+    if (tabBtn)  tabBtn.classList.toggle('active', id === t);
+    if (panelEl) panelEl.classList.toggle('active', id === t);
+  });
+  var fr = document.getElementById('filter-row');
+  if (fr) fr.style.display = (t === 'semua') ? 'flex' : 'none';
+}
+
+function applyFilter() {
+  if (!dashData) return;
+  var fs = document.getElementById('f-sesi').value;
+  var fr = document.getElementById('f-regu').value;
+  renderLogTable('panel-semua', dashData.recentLogs.filter(function(l) {
+    if (fs && l.sesi !== fs) return false;
+    if (fr && l.regu !== fr) return false;
+    return true;
+  }));
+}
+
+/* ══════════════════════════════════════════════════════════
+   UTILITIES
+   ══════════════════════════════════════════════════════════ */
+function getSesi() {
+  var hr = new Date().getHours();
+  if (hr >= 7  && hr < 13) return 'pagi';
+  if (hr >= 13 && hr < 19) return 'siang';
+  return 'malam';
+}
+
+function getSesiLabel(s) {
+  if (s === 'pagi')  return 'Pagi (07.00–13.00)';
+  if (s === 'siang') return 'Siang (13.00–19.00)';
+  return 'Malam (19.00–07.00)';
+}
+
+function escH(s) {
+  return String(s || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function toast(m, t) {
+  var e = document.getElementById('toast');
+  if (e) {
+    e.textContent = m;
+    e.className = 'toast show' + (t ? ' ' + t : '');
+    clearTimeout(e._t);
+    e._t = setTimeout(function(){ e.classList.remove('show'); }, 2800);
+  }
+}
+</script>
+</body>
+</html>
